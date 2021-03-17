@@ -595,8 +595,9 @@ func! neuron#tags_update(tag)
 	"handle if there is no current tags key
 	if l:line_tags == 0
 		"go to end, search backwards to front matter sep
-		normal! G
-		let l:line_tags = search('^---', 'bW')
+		execute "normal! gg"
+        execute "normal! j"
+		let l:line_tags = search('^---', 'W')
 	else
 		call deletebufline('', l:line_tags, l:line_tags_end - 1)
 	endif
@@ -692,3 +693,6 @@ func! neuron#tags_search()
 		\ 'sink': function('util#edit_shrink_fzf'),
 	\ }, g:neuron_fullscreen_search))
 endfunc
+
+func! neuron#check_daemon()
+    if g:neuron_run_daemon && exists(g:_neuron_daemon_process)
