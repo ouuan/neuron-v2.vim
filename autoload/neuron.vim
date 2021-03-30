@@ -693,6 +693,3 @@ func! neuron#tags_search()
 		\ 'sink': function('util#edit_shrink_fzf'),
 	\ }, g:neuron_fullscreen_search))
 endfunc
-
-func! neuron#check_daemon()
-    if g:neuron_run_daemon && exists(g:_neuron_daemon_process)
