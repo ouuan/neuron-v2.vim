@@ -16,6 +16,9 @@ if g:neuron_dir == './'
 	let g:neuron_dir = getcwd() . "/"
 endif
 
+if !exists("g:neuron_extension") 
+	let g:neuron_extension = '.md'
+endif
 let g:neuron_backlinks_size = get(g:, 'neuron_backlinks_size', 40)
 let g:neuron_backlinks_vsplit = get(g:, 'neuron_backlinks_vsplit', 1)
 let g:neuron_backlinks_vsplit_right = get(g:, 'neuron_backlinks_vsplit_right', 1)
