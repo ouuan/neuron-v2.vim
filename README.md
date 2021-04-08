@@ -17,7 +17,7 @@ fork that supports Neuron's V2 format.
 ### Using [vim-plug](https://github.com/junegunn/vim-plug)
 ```vim
 Plug 'junegunn/fzf.vim'
-Plug 'fiatjaf/neuron.vim'
+Plug 'chiefnoah/neuron-v2.vim'
 ```
 
 ### Using [home-manager](https://github.com/rycee/home-manager)

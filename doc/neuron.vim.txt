@@ -1,6 +1,6 @@
 *neuron.vim.txt* Manage your Zettelkasten.
 
-Author: fiatjaf <https://fiatjaf.alhur.es/>
+Authors: fiatjaf <https://fiatjaf.alhur.es/>, chiefnoah <https://packetlost.dev>
 
 INTRODUCTION                                    *neuron.vim*
 
@@ -77,6 +77,7 @@ MAPPINGS                                        *neuron.vim-mappings*
 	nm gzn <Plug>EditZettelNew
 	nm gzN <Plug>EditZettelNewFromCword
 	vm gzN <esc><Plug>EditZettelNewFromVisual
+    nm gzc <Plug>NewZettel
 	nm gzr <Plug>NeuronRefreshCache
 	nm gzu <Plug>EditZettelLast
 	nm gzU :<C-U>call neuron#move_history(-1)<cr>
