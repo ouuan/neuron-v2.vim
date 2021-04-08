@@ -179,20 +179,25 @@ func! neuron#insert_zettel_last(as_folgezettel)
 	call util#insert(l:zettelid, a:as_folgezettel)
 endf
 
-func! neuron#edit_zettel_new(title)
+" variable args, the first "variable" arg is a int, either 0 or 1 to determine
+" if the new zettel should have a link inserted into the current buffer
+func! neuron#edit_zettel_new(title, ...)
 	if bufname('%') != ''
 		w
 	endif
 	let l:zettel_path = util#new_zettel_path(a:title)
 	let l:zettel_id = util#zettel_id_from_path(l:zettel_path)
-	execute "normal! i[[".l:zettel_id."]]#"
-	call neuron#add_virtual_titles()
+    let l:insert_new_zettel_link = get(a:, 1, 1)
+    if l:insert_new_zettel_link == 1
+        execute "normal! i[[".l:zettel_id."]]#"
+        call neuron#add_virtual_titles()
+    endif
 	exec 'edit '.l:zettel_path
 	call util#add_empty_zettel_body(a:title)
 	let g:_neuron_must_refresh_on_write = 1
 endf
 
-func! neuron#edit_zettel_new_from_cword()
+func! neuron#dit_zettel_new_from_cword()
 	let l:title = expand("<cword>")
 	call neuron#edit_zettel_new(l:title)
 endf

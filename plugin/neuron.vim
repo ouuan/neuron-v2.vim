@@ -48,9 +48,11 @@ nm <silent> <Plug>ToggleBacklinks :<C-U>call neuron#toggle_backlinks()<cr>
 nm <silent> <Plug>TagsAddNew :<C-U>call neuron#tags_add_new()<cr>
 nm <silent> <Plug>TagsAddSelect :<C-U>call neuron#tags_add_select()<cr>
 nm <silent> <Plug>TagsZettelSearch :<C-U>call neuron#tags_search()<cr>
+nm <silent> <Plug>NewZettel :<C-U>call neuron#edit_zettel_new('', 0)<cr>
 
 if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzn <Plug>EditZettelNew
+	nm gzc <Plug>NewZettel
 	nm gzN <Plug>EditZettelNewFromCword
 	vm gzN <esc><Plug>EditZettelNewFromVisual
 	nm gzr <Plug>NeuronRefreshCache
