@@ -218,17 +218,12 @@ func! neuron#edit_zettel_under_cursor()
 		echo "Waiting until cache is populated."
 		return
 	end
-
-	let l:zettel_id = trim(expand('<cword>'), "<>[]")
+    let l:prev = @p
+    execute 'normal! "pyi['
+    let l:zettel_id = @p
+    let @p = l:prev
 	if util#is_zettelid_valid(l:zettel_id)
 		call neuron#edit_zettel(l:zettel_id)
-	else
-		let l:zettel_id = trim(expand('<cWORD>'), "<>[]")
-		if util#is_zettelid_valid(l:zettel_id)
-			call neuron#edit_zettel(l:zettel_id)
-		else
-			echo 'Word under cursor is not a known zettel!'
-		endif
 	endif
 endf
 
