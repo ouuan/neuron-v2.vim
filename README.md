@@ -52,7 +52,8 @@ Most operations are executed in normal mode
 7. `gzu` goes back after editing another zettel type.
     - `gzu` repeatedly will cycle between the two last visited zettels.
 9. `gzU` goes back multiple times in the history of visited zettels (and `gzP` will go forward).
-10. `gzn` creates a new blank zettel
+10. `gzn` creates a new blank zettel buffer, inserts the id into the current buffer under the cursor, and edits the new zettel buffer
+11. `gzc` creates a new blank zettel buffer and opens it
 11. `gzN` creates a new zettel using the current word under the cursor as its title.
     - if you're in visual selection mode `gzN` will instead use the selected text (only the first line if there are more than one selected). This will replace the selected text or current word with a link to the newly-created zettel.
 12. `gzs` works like `gzz`, but instead it searches the content of the zettels, not only the title. For this it calls the external command `ag`.
