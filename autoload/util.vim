@@ -28,14 +28,16 @@ func! util#is_zettelid_valid(zettelid)
 	end
 endf
 
+" returns a list of zettel IDs, their start and end positions in the line
 func! util#get_zettel_in_line(line)
+    let l:matched_zettel_ids = []
 	for zettel in g:_neuron_zettels_by_id
-		let l:matched = matchstr(a:line, '\[\['.zettel['id'].'\]\]')
+		let l:matched = matchstrpos(a:line, '\[\['.zettel['id'].'\]\]')
 		if !empty(l:matched)
-			return l:matched[2:-3]
+			call add(l:matched_zettel_ids, [l:matched[0][2:-3], l:matched[1], l:matched[2]])
 		end
 	endfor
-	return ""
+	return l:matched_zettel_ids
 endf
 
 func! util#get_zettel_from_fzf_line(line)

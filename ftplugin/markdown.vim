@@ -11,5 +11,6 @@ aug neuron
 	exec ':au! BufRead '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#add_virtual_titles()'
 	exec ':au! BufEnter '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#on_enter()'
 	exec ':au! BufWrite '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#on_write()'
+	exec ':au! CursorMoved '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#on_cursor_move()'
 aug END
 let b:did_ftplugin = 1

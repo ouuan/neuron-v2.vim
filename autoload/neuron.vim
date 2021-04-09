@@ -8,23 +8,28 @@ func! neuron#add_virtual_titles()
 	if !exists('*nvim_buf_set_virtual_text')
 		return
 	endif
-
 	let l:ns = nvim_create_namespace('neuron')
 	call nvim_buf_clear_namespace(0, l:ns, 0, -1)
-	let l:re_neuron_link = '\[\[\[\?\([0-9a-zA-Z_-]\+\)\(?cf\)\?\]\]\]\?'
 	let l:lnum = -1
 	for line in getline(1, "$")
 		let l:lnum += 1
-		let l:zettel_id = util#get_zettel_in_line(line)
-		if empty(l:zettel_id)
+		let l:zettel_ids = util#get_zettel_in_line(line)
+		if empty(l:zettel_ids)
 			continue
 		endif
-		let l:title = g:_neuron_zettels_titles_list[l:zettel_id]
-		" TODO: Use
-		" nvim_buf_set_extmark({buffer}, {ns_id}, {id}, {line}, {col}, {opts})
-		" function instead of nvim_buf_set_virtual_text. Check this link for
-		" help https://github.com/neovim/neovim/blob/e628a05b51d4620e91662f857d29f1ac8fc67862/runtime/doc/api.txt#L1935-L1955
-		call nvim_buf_set_virtual_text(0, l:ns, l:lnum, [[l:title, 'TabLineFill']], {})
+        " virt_titles are the actual title of each zettel found on this line
+        let l:virt_titles = []
+        for zettel_pos in l:zettel_ids
+            if empty(l:zettel_pos[0])
+                continue
+            endif
+            let l:title = g:_neuron_zettels_titles_list[l:zettel_pos[0]]
+            call insert(l:virt_titles, l:title, 0)
+            call nvim_buf_set_extmark(0, l:ns, l:lnum, l:zettel_pos[1], {"end_col": l:zettel_pos[2], "hl_group": "Special"})
+        endfor
+        if !empty(l:virt_titles)
+            call nvim_buf_set_virtual_text(0, l:ns, l:lnum, [[join(l:virt_titles, ", "), 'TabLineFill']], {})
+        endif
 	endfor
 
 	if g:neuron_inline_backlinks == 0
@@ -392,6 +397,72 @@ func! neuron#on_write()
 	else
 		call neuron#add_virtual_titles()
 	end
+endf
+
+" when the cursor moves
+func! neuron#on_cursor_move()
+    call neuron#check_cursor_on_extmark()
+endf
+
+func! neuron#check_cursor_on_extmark()
+	if !exists('*nvim_buf_get_extmarks') || ! mode() == "n"
+        echo "not in normal"
+		return
+	endif
+    let [l:_, l:lnum, l:col, l:off, l:curswant] = getcurpos()
+    " check if the current position is within a zettel link with a currently
+    " dislaying window
+    if exists("b:_neuron_zettel_title_pos")
+        " if the cursor isn't on the zettel id
+        if l:lnum-1 != b:_neuron_zettel_title_pos[0] || l:col <= b:_neuron_zettel_title_pos[1] || l:col > b:_neuron_zettel_title_pos[2]
+           " clear the window
+           call neuron#clear_zettel_title_float_win()
+        else
+            " otherwise, no op
+            return
+        endif
+    endif
+    
+	let l:ns = nvim_create_namespace('neuron')
+    let l:extmarks = nvim_buf_get_extmarks(0, l:ns, [l:lnum-1, 0], [l:lnum-1, -1], {"details": v:true})
+    for extmark in l:extmarks
+        if !has_key(l:extmark[3], "end_col")
+            continue
+        endif
+        if l:col-1 >= l:extmark[2] && l:col <= l:extmark[3]["end_col"]
+            let b:_neuron_zettel_title_pos = [l:lnum-1, l:extmark[2], l:extmark[3]["end_col"]-1]
+            call neuron#float_zettel_title_under_cursor(l:lnum-1, l:extmark[2], l:extmark[3]["end_col"]-1)
+            return
+        else
+        endif
+    endfor
+endf
+
+func! neuron#clear_zettel_title_float_win()
+    if exists("b:_neuron_zettel_title_win")
+        echo "closing window: " . string(b:_neuron_zettel_title_win)
+        call nvim_win_close(b:_neuron_zettel_title_win, v:true)
+        unlet b:_neuron_zettel_title_win
+    endif
+    if exists("b:_neuron_zettel_title_pos")
+        unlet b:_neuron_zettel_title_pos
+    endif
+endf
+
+func! neuron#float_zettel_title_under_cursor(row, startcol, endcol)
+    " get the zettel id within row, col
+    let l:link = nvim_buf_get_lines(0, a:row, a:row+1, v:true)[0][a:startcol : a:endcol]
+	let l:re_neuron_link = '\(#\?\[\[\[\?\)\([0-9a-zA-Z_-]\+\)\(\]\]\]\?#\?\)'
+    let l:zettel_id = matchlist(l:link, l:re_neuron_link)[2]
+    echo "zettel id: " . string(l:zettel_id)
+	call util#is_zettelid_valid(l:zettel_id)
+    let l:title = g:_neuron_zettels_titles_list[l:zettel_id]
+    let b:_neuron_zettel_title_buf = nvim_create_buf(v:false, v:true)
+    call nvim_buf_set_lines(b:_neuron_zettel_title_buf, 0, -1, v:true, ['  ' . l:title])
+    let l:opts = {'relative': 'win', 'width': len(l:title)+4, 'height': 1, 'col': a:startcol+2, 'row': a:row-1, 
+                \ 'anchor': 'NW', 'style': 'minimal'}
+    let b:_neuron_zettel_title_win = nvim_open_win(b:_neuron_zettel_title_buf, 0, l:opts)
+    call nvim_win_set_option(b:_neuron_zettel_title_win, 'winhl', 'Normal:PmenuSel')
 endf
 
 func! neuron#update_backlinks(show)
