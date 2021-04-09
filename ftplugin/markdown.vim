@@ -12,5 +12,6 @@ aug neuron
 	exec ':au! BufEnter '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#on_enter()'
 	exec ':au! BufWrite '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#on_write()'
 	exec ':au! CursorMoved '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#on_cursor_move()'
+	exec ':au! BufLeave '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#clear_zettel_title_float_win()'
 aug END
 let b:did_ftplugin = 1
