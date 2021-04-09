@@ -440,7 +440,6 @@ endf
 
 func! neuron#clear_zettel_title_float_win()
     if exists("b:_neuron_zettel_title_win")
-        echo "closing window: " . string(b:_neuron_zettel_title_win)
         call nvim_win_close(b:_neuron_zettel_title_win, v:true)
         unlet b:_neuron_zettel_title_win
     endif
@@ -454,7 +453,6 @@ func! neuron#float_zettel_title_under_cursor(row, startcol, endcol)
     let l:link = nvim_buf_get_lines(0, a:row, a:row+1, v:true)[0][a:startcol : a:endcol]
 	let l:re_neuron_link = '\(#\?\[\[\[\?\)\([0-9a-zA-Z_-]\+\)\(\]\]\]\?#\?\)'
     let l:zettel_id = matchlist(l:link, l:re_neuron_link)[2]
-    echo "zettel id: " . string(l:zettel_id)
 	call util#is_zettelid_valid(l:zettel_id)
     let l:title = g:_neuron_zettels_titles_list[l:zettel_id]
     let b:_neuron_zettel_title_buf = nvim_create_buf(v:false, v:true)
