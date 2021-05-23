@@ -345,8 +345,8 @@ func! s:refresh_backlink_callback_vim(channel, data)
 endf
 
 func! s:refresh_backlink_callback(data)
-	let l:links = a:data['result']
-	let l:id = a:data['query'][1][1]
+	let l:links = a:data[0]['result']
+	let l:id = a:data[0]['query'][1][1]
 	for link in l:links
 		if has_key(g:_neuron_backlinks, link[1]['ID'])
 			call add(g:_neuron_backlinks[l:id], link[1]['ID'])
