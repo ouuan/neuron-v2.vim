@@ -202,7 +202,7 @@ func! neuron#edit_zettel_new(title, ...)
 	let g:_neuron_must_refresh_on_write = 1
 endf
 
-func! neuron#dit_zettel_new_from_cword()
+func! neuron#edit_zettel_new_from_cword()
 	let l:title = expand("<cword>")
 	call neuron#edit_zettel_new(l:title)
 endf
